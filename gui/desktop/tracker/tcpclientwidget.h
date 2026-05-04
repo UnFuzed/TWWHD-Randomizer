@@ -1,11 +1,12 @@
 #pragma once
 
 #include <QWidget>
-#include <QTcpSocket>
 
+class QTcpSocket;
 class QLineEdit;
 class QPushButton;
 class QLabel;
+class QTextEdit;
 
 class TcpClientWidget : public QWidget
 {
@@ -17,10 +18,16 @@ public:
 
 private slots:
     void toggleConnection();
-
     void onConnected();
     void onDisconnected();
     void onError();
+    void onReadyRead();
+
+private:
+    bool isConnected() const;
+    void setStatus(const QString &text, const QString &color);
+    void log(const QString &msg);
+    void updateButton();
 
 private:
     QTcpSocket *socket;
@@ -28,9 +35,5 @@ private:
     QLineEdit *ipEdit;
     QPushButton *toggleBtn;
     QLabel *statusLabel;
-
-    bool isConnected() const;
-
-    void setStatus(const QString &text, const QString &color);
-    void updateButton();
+    QTextEdit *logBox;
 };
