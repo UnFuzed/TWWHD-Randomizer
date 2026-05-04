@@ -36,9 +36,11 @@ target_sources(wwhd_rando PRIVATE mainwindow.cpp mainwindow.ui player_customizat
                                   tracker/tracker_label.cpp tracker/tracker.cpp
                                   tracker/tracker_preferences_dialog.ui tracker/tracker_preferences_dialog.cpp
                                   tracker/tracker_required_boss_checkbox.cpp
+                                  tracker/tcpclientwidget.cpp
                                   ${app_icon_resource_windows} ${app_icon_macos})
 
-target_link_libraries(wwhd_rando PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(wwhd_rando PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network)
+
 
 set_target_properties(wwhd_rando PROPERTIES
     MACOSX_BUNDLE_BUNDLE_NAME "WWHD Randomizer" # 15 character limit

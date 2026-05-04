@@ -93,7 +93,7 @@ if(QT_GUI)
   message("Building with Qt GUI")
 
   find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-  find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+  find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
 
   add_compile_definitions(QT_GUI)
 
@@ -122,7 +122,7 @@ add_subdirectory("seedgen")
 add_subdirectory("logic")
 add_subdirectory("customizer")
 
-target_include_directories(wwhd_rando PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
+target_include_directories(wwhd_rando PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/gui/desktop/tracker)
 
 if(DEFINED DEVKITPRO)
   # Some code specific to Wii U
