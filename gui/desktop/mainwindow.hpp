@@ -139,6 +139,10 @@ public:
     void tracker_update_chart_visibility();
 
 private slots:
+
+    void onTrackerDataReceived(const QByteArray& data);
+    void updateTrackerInventoryUI();
+
     void show_error_dialog(const std::string& s, const std::string& title = "An error has occured!");
     void update_mixed_pools_combobox_text(const QString& text);
     void update_mixed_pools_combobox_option(const QString& text = "");

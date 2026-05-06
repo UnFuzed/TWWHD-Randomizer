@@ -82,6 +82,9 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    connect(ui->tcpClientWidget, &TcpClientWidget::dataReceived,
+            this, &MainWindow::onTrackerDataReceived);
+
     if (std::string(RANDOMIZER_VERSION).empty()) {
         show_warning_dialog("Could not determine Randomizer version. Please tell a dev if you see this message.");
     }
@@ -127,6 +130,55 @@ MainWindow::MainWindow(QWidget *parent)
     // Setup Tracker
     initialize_tracker();
     load_tracker_autosave();
+}
+
+void MainWindow::onTrackerDataReceived(const QByteArray& data)
+{
+    QString msg = QString::fromUtf8(data).trimmed();
+
+    int itemId = -1;
+
+    if (msg.startsWith("ITEM:"))
+    {
+        itemId = msg.mid(5).toInt();
+    }
+    else
+    {
+        bool ok;
+        itemId = msg.toInt(&ok);
+        if (!ok) return;
+    }
+
+    GameItem gameItem = static_cast<GameItem>(itemId);
+
+    trackerInventory.emplace_back(gameItem, &trackerWorlds[0]);
+
+    updateTrackerInventoryUI();
+}
+
+void MainWindow::updateTrackerInventoryUI()
+{
+    auto trackerInventoryCopy = trackerInventory;
+
+    for (auto inventoryButton : ui->tracker_tab->findChildren<TrackerInventoryButton*>())
+    {
+        int count = 0;
+
+        for (auto& itemState : inventoryButton->itemStates)
+        {
+            auto item = Item(itemState.gameItem, &trackerWorlds[0]);
+
+            if (itemState.gameItem != GameItem::NOTHING &&
+                elementInPool(item, trackerInventoryCopy))
+            {
+                count++;
+                removeElementFromPool(trackerInventoryCopy, item);
+            }
+        }
+
+        inventoryButton->setState(count);
+        inventoryButton->updateIcon();
+    }
 }
 
 MainWindow::~MainWindow()

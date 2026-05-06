@@ -1,6 +1,5 @@
 #include "tcpclientwidget.h"
 
-#include <QTcpSocket>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QLabel>
@@ -109,8 +108,17 @@ void TcpClientWidget::onError()
 
 void TcpClientWidget::onReadyRead()
 {
-    QByteArray data = socket->readAll();
-    log("RX: " + QString::fromUtf8(data));
+    buffer += socket->readAll();
+
+    while (buffer.contains('\n'))
+    {
+        int index = buffer.indexOf('\n');
+        QByteArray line = buffer.left(index).trimmed();
+        buffer.remove(0, index + 1);
+
+        log("RX: " + QString::fromUtf8(line));
+        emit dataReceived(line);
+    }
 }
 
 void TcpClientWidget::setStatus(const QString &text, const QString &color)
